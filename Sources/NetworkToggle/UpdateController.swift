@@ -13,7 +13,7 @@ import AppKit
 ///
 /// A failure at any step aborts the update and leaves the installed app untouched.
 enum UpdateController {
-    private static let repository = "smanke/NetworkToggle"
+    private static let repository = "smanke-org/NetworkToggle"
 
     enum UpdateOutcome {
         case upToDate(current: String)
@@ -30,7 +30,7 @@ enum UpdateController {
             let current = AppInfo.version
             do {
                 let release = try await fetchLatestRelease()
-                Diagnostics.note("update check: latest=\(release.version) current=\(current) "
+                Diagnostics.note("update check (\(repository)): latest=\(release.version) current=\(current) "
                                  + "newer=\(isNewer(release.version, than: current))")
                 guard isNewer(release.version, than: current) else {
                     if !silent { present(.upToDate(current: current)) }

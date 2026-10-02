@@ -155,13 +155,13 @@ the VPN.
 
 ## Download
 
-**[Download NetworkToggle (.dmg)](https://github.com/smanke/NetworkToggle/releases/latest/download/NetworkToggle.dmg)** — always the latest release.
+**[Download NetworkToggle (.dmg)](https://github.com/smanke-org/NetworkToggle/releases/latest/download/NetworkToggle.dmg)** — always the latest release.
 
 Drag it to Applications and open it, then click **Install helper** once and approve the
 prompt. Changing the connection order is a system setting, so it needs a small
 privileged helper; the app itself holds no elevated rights.
 
-Every [release](https://github.com/smanke/NetworkToggle/releases) also carries a
+Every [release](https://github.com/smanke-org/NetworkToggle/releases) also carries a
 version-stamped copy of the same image, for pinning to a specific build.
 
 ## Build
