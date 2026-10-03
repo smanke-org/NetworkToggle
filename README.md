@@ -225,6 +225,14 @@ silently ignores it.
 Both the app *and* the disk image need their own notarization ticket: a download picks
 up a quarantine attribute and Gatekeeper checks the image before it looks at the app.
 
+## Opening at login
+
+**Settings › General › Open NetworkToggle at login** registers the app as a login item
+through `SMAppService`. The switch reflects the system registration rather than a stored
+preference, and is re-read every time Settings opens: it can be turned off in System
+Settings › General › Login Items at any time, and macOS sends no notification when that
+happens. If it has been switched off there, Settings says so and links to that pane.
+
 ## Diagnostics
 
 NetworkToggle appends what it decides to `~/Library/Logs/NetworkToggle.log` — which

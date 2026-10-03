@@ -6,9 +6,28 @@ struct SettingsView: View {
     let controller: SwitchController
 
     @State private var settings = AppSettings.shared
+    @State private var login = LaunchAtLogin.shared
 
     var body: some View {
         Form {
+            Section("General") {
+                Toggle("Open NetworkToggle at login", isOn: Binding(
+                    get: { login.isEnabled || login.needsApproval },
+                    set: { login.set($0) }
+                ))
+                if login.needsApproval {
+                    Text("It's switched off in Login Items. Turn NetworkToggle back on there to have it open at login.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Button("Open Login Items Settings") { login.openLoginItemsSettings() }
+                }
+                if let error = login.lastError {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+            }
+
             Section("Automatic switching") {
                 Picker("When a wired connection appears", selection: $settings.wiredArrival) {
                     ForEach(AppSettings.WiredArrival.allCases) { behaviour in
@@ -17,9 +36,9 @@ struct SettingsView: View {
                 }
                 Toggle("Also force a reconnect", isOn: $settings.autoSwitchForcesReconnect)
                     .disabled(settings.wiredArrival == .ignore)
-                Text("Forcing a reconnect cycles Wi-Fi, which is the only way open "
-                     + "connections and VPN tunnels move to the wired link. It briefly "
-                     + "drops everything.")
+                Text("Holds Wi-Fi off until connections opened over it have moved to the "
+                     + "wired link, then turns it back on. A VPN does not move this way — "
+                     + "disconnect and reconnect it instead.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
@@ -77,6 +96,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
+        .onAppear { login.refresh() }
         .frame(width: 460)
         .fixedSize(horizontal: false, vertical: true)
     }
