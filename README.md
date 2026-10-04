@@ -1,10 +1,35 @@
 # NetworkToggle
 
-A macOS menu bar app that makes the active network connection obvious and lets you
-change it deliberately, instead of discovering an hour later that everything is still
-running over Wi-Fi while a gigabit dock sits idle.
+**Shows which network connection your Mac is really using, and moves you onto the fast wired one when you dock.**
 
-Requires macOS 26.
+Plug a Mac into a dock with gigabit Ethernet and it often keeps running over Wi-Fi anyway.
+macOS puts each new dock's Ethernet at the bottom of the service order, a slow address
+handshake keeps it from ranking, and connections that are already open, including VPN tunnels,
+never move off Wi-Fi. You find out an hour later when a big copy crawls. NetworkToggle is a menu
+bar app that shows the connection actually carrying your traffic, switches to wired when a dock
+appears, and moves stranded connections over.
+
+---
+
+## ⬇️ Download
+
+<p align="center">
+  <a href="https://github.com/smanke-org/NetworkToggle/releases/latest/download/NetworkToggle.dmg">
+    <img src="https://img.shields.io/badge/Download-NetworkToggle.dmg-2ea44f?style=for-the-badge&logo=apple&logoColor=white" alt="Download NetworkToggle.dmg" height="48">
+  </a>
+</p>
+
+1. **[Download NetworkToggle.dmg](https://github.com/smanke-org/NetworkToggle/releases/latest/download/NetworkToggle.dmg)**
+2. Open it and drag **NetworkToggle** to **Applications**.
+3. Open NetworkToggle and click **Install helper** in its menu.
+4. Approve the helper in System Settings when asked. Changing the connection order is a system
+   setting, so a small privileged helper does it; the app itself holds no elevated rights.
+
+Requires macOS 26 or later. Signed with Developer ID and notarized by Apple. Every
+[release](https://github.com/smanke-org/NetworkToggle/releases) also carries a version-stamped
+copy of the same image, for pinning to a specific build.
+
+---
 
 ## The problem it solves
 
@@ -23,47 +48,6 @@ Three separate things cause "docked but still on Wi-Fi":
    moves them.
 
 NetworkToggle addresses all three, and is explicit about which one it is doing.
-
-## Architecture
-
-| Target | Runs as | Responsibility |
-| --- | --- | --- |
-| `NetworkToggleKit` | — | Shared XPC protocol, ids, and the unprivileged SCPreferences reader |
-| `NetworkToggle` | you | Menu bar UI, `SCDynamicStore` monitoring, switch policy |
-| `NetworkToggleHelper` | root | The only code that writes system configuration |
-
-Reading the network configuration needs no privilege, so the app does that itself and
-holds no elevated rights. Writing does, so every mutation is one of four narrow methods
-on the daemon, each of which re-validates its arguments.
-
-The daemon is installed with `SMAppService` — approved once, in System Settings — rather
-than by prompting for an admin password on every launch.
-
-### Security model
-
-Both ends of the XPC connection pin the other's code signature to a requirement built
-from the team ID, not a code hash:
-
-```
-identifier "com.smanke.NetworkToggle.Helper" and anchor apple generic
-    and certificate leaf[subject.OU] = "32CWL275JJ"
-```
-
-The helper calls `setConnectionCodeSigningRequirement` so the kernel rejects
-unauthorised callers before the delegate ever sees them; the app calls
-`setCodeSigningRequirement` so it will not hand commands to a substituted daemon. A
-code-hash-based (ad-hoc) signature would change on every rebuild and cannot be used —
-`build_app.sh` fails rather than falling back to one.
-
-`setServiceOrder` refuses anything that is not a permutation of the current order, so a
-truncated list cannot silently unrank the services it omits.
-
-### The guard that matters
-
-Auto-switch does not fire on link-up. It waits for the interface to settle, requires a
-non-link-local address *and* a default router, and then **pings the gateway**. A dock
-whose uplink is dead presents a fully configured interface; only a reply distinguishes
-it from a working one. No reply means NetworkToggle notifies instead of switching.
 
 ## Live throughput
 
@@ -153,28 +137,22 @@ would pull a full-tunnel VPN off its connection asks first. To choose which conn
 VPN uses, set the order while the VPN is disconnected, or change it and then reconnect
 the VPN.
 
-## Download
+## Opening at login
 
-**[Download NetworkToggle (.dmg)](https://github.com/smanke-org/NetworkToggle/releases/latest/download/NetworkToggle.dmg)** — always the latest release.
+**Settings › General › Open NetworkToggle at login** registers the app as a login item
+through `SMAppService`. The switch reflects the system registration rather than a stored
+preference, and is re-read every time Settings opens: it can be turned off in System
+Settings › General › Login Items at any time, and macOS sends no notification when that
+happens. If it has been switched off there, Settings says so and links to that pane.
 
-Drag it to Applications and open it, then click **Install helper** once and approve the
-prompt. Changing the connection order is a system setting, so it needs a small
-privileged helper; the app itself holds no elevated rights.
+## Dock and menu bar
 
-Every [release](https://github.com/smanke-org/NetworkToggle/releases) also carries a
-version-stamped copy of the same image, for pinning to a specific build.
-
-## Build
-
-```
-./build_app.sh          # universal binary, signed with your Developer ID
-./install.sh            # copies to /Applications and launches
-```
-
-`SMAppService` refuses to register a daemon for an app running anywhere but
-`/Applications`, so running from `.build` will not work. `install.sh` updates an
-existing install in place with `rsync` rather than replacing the directory, which would
-orphan the daemon approval.
+**Settings › Dock and menu bar** has **Show in Dock** (off by default) and **Show in
+menu bar** (on), in any combination. Right-clicking the Dock icon offers **Settings…**.
+With both off, NetworkToggle keeps working with no icon; open it again from Applications
+or Spotlight to get back to Settings. Settings is an AppKit-hosted window
+(`SettingsWindow.swift`) rather than a SwiftUI `Settings` scene, because that scene can
+only be opened from inside a SwiftUI view, and with both icons hidden there is none.
 
 ## Updates
 
@@ -225,22 +203,58 @@ silently ignores it.
 Both the app *and* the disk image need their own notarization ticket: a download picks
 up a quarantine attribute and Gatekeeper checks the image before it looks at the app.
 
-## Opening at login
+## Architecture
 
-**Settings › General › Open NetworkToggle at login** registers the app as a login item
-through `SMAppService`. The switch reflects the system registration rather than a stored
-preference, and is re-read every time Settings opens: it can be turned off in System
-Settings › General › Login Items at any time, and macOS sends no notification when that
-happens. If it has been switched off there, Settings says so and links to that pane.
+| Target | Runs as | Responsibility |
+| --- | --- | --- |
+| `NetworkToggleKit` | — | Shared XPC protocol, ids, and the unprivileged SCPreferences reader |
+| `NetworkToggle` | you | Menu bar UI, `SCDynamicStore` monitoring, switch policy |
+| `NetworkToggleHelper` | root | The only code that writes system configuration |
 
-## Dock and menu bar
+Reading the network configuration needs no privilege, so the app does that itself and
+holds no elevated rights. Writing does, so every mutation is one of four narrow methods
+on the daemon, each of which re-validates its arguments.
 
-**Settings › Dock and menu bar** has **Show in Dock** (off by default) and **Show in
-menu bar** (on), in any combination. Right-clicking the Dock icon offers **Settings…**.
-With both off, NetworkToggle keeps working with no icon; open it again from Applications
-or Spotlight to get back to Settings. Settings is an AppKit-hosted window
-(`SettingsWindow.swift`) rather than a SwiftUI `Settings` scene, because that scene can
-only be opened from inside a SwiftUI view, and with both icons hidden there is none.
+The daemon is installed with `SMAppService` — approved once, in System Settings — rather
+than by prompting for an admin password on every launch.
+
+### Security model
+
+Both ends of the XPC connection pin the other's code signature to a requirement built
+from the team ID, not a code hash:
+
+```
+identifier "com.smanke.NetworkToggle.Helper" and anchor apple generic
+    and certificate leaf[subject.OU] = "32CWL275JJ"
+```
+
+The helper calls `setConnectionCodeSigningRequirement` so the kernel rejects
+unauthorised callers before the delegate ever sees them; the app calls
+`setCodeSigningRequirement` so it will not hand commands to a substituted daemon. A
+code-hash-based (ad-hoc) signature would change on every rebuild and cannot be used —
+`build_app.sh` fails rather than falling back to one.
+
+`setServiceOrder` refuses anything that is not a permutation of the current order, so a
+truncated list cannot silently unrank the services it omits.
+
+### The guard that matters
+
+Auto-switch does not fire on link-up. It waits for the interface to settle, requires a
+non-link-local address *and* a default router, and then **pings the gateway**. A dock
+whose uplink is dead presents a fully configured interface; only a reply distinguishes
+it from a working one. No reply means NetworkToggle notifies instead of switching.
+
+## Build
+
+```
+./build_app.sh          # universal binary, signed with your Developer ID
+./install.sh            # copies to /Applications and launches
+```
+
+`SMAppService` refuses to register a daemon for an app running anywhere but
+`/Applications`, so running from `.build` will not work. `install.sh` updates an
+existing install in place with `rsync` rather than replacing the directory, which would
+orphan the daemon approval.
 
 ## Diagnostics
 
