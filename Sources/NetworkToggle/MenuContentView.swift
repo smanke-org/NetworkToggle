@@ -65,7 +65,6 @@ struct MenuContentView: View {
         (monitor.vpnCarrier ?? monitor.primary)?.name ?? "the active connection"
     }
 
-    @Environment(\.openSettings) private var openSettings
     @State private var settings = AppSettings.shared
     @State private var updates = UpdateAvailability.shared
 
@@ -418,8 +417,7 @@ struct MenuContentView: View {
             }
 
             MenuRowButton(title: "Settings…", systemImage: "gearshape") {
-                openSettings()
-                NSApp.activate(ignoringOtherApps: true)
+                SettingsWindow.shared.show()
             }
             MenuRowButton(title: "Quit NetworkToggle", systemImage: "power") {
                 NSApp.terminate(nil)

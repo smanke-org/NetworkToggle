@@ -1,4 +1,4 @@
-import Foundation
+import AppKit
 import Observation
 
 @Observable
@@ -39,6 +39,26 @@ final class AppSettings {
 
     /// Show the active interface's name next to the menu bar icon.
     var showNameInMenuBar: Bool { didSet { store(showNameInMenuBar, "showNameInMenuBar") } }
+
+    /// A Dock icon whose right-click menu opens Settings. Off by default.
+    var showInDock: Bool = AppPresence.showInDock {
+        didSet {
+            guard showInDock != AppPresence.showInDock else { return }
+            AppPresence.showInDock = showInDock
+            // Settings is the key window while its own toggle is clicked.
+            AppPresence.applyDock(keepInFront: NSApp.keyWindow)
+        }
+    }
+
+    /// The menu bar icon. On by default; may be off together with the Dock icon.
+    /// Bound to the MenuBarExtra, so removing the icon by Command-dragging it off
+    /// the menu bar turns this off too.
+    var showInMenuBar: Bool = AppPresence.showInMenuBar {
+        didSet {
+            guard showInMenuBar != AppPresence.showInMenuBar else { return }
+            AppPresence.showInMenuBar = showInMenuBar
+        }
+    }
 
     /// Look for a newer release shortly after launch. Silent unless there is something
     /// to install, so it cannot turn into a dialog on every launch.

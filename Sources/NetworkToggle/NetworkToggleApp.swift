@@ -3,10 +3,21 @@ import NetworkToggleKit
 
 @main
 struct NetworkToggleApp: App {
-    @State private var model = AppModel()
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @State private var model: AppModel
+    @State private var settings = AppSettings.shared
+
+    init() {
+        let model = AppModel()
+        _model = State(initialValue: model)
+        SettingsWindow.shared.makeContent = {
+            AnyView(SettingsView(helper: model.helper, controller: model.controller))
+        }
+    }
 
     var body: some Scene {
-        MenuBarExtra {
+        // Settings can remove the menu bar icon; the app then lives in the Dock, or nowhere.
+        MenuBarExtra(isInserted: $settings.showInMenuBar) {
             MenuContentView(
                 monitor: model.monitor,
                 helper: model.helper,
@@ -20,9 +31,12 @@ struct NetworkToggleApp: App {
             MenuBarLabel(monitor: model.monitor)
         }
         .menuBarExtraStyle(.window)
-
-        Settings {
-            SettingsView(helper: model.helper, controller: model.controller)
+        .commands {
+            // The app menu, while there is a Dock icon: Settings… opens the same window.
+            CommandGroup(replacing: .appSettings) {
+                Button("Settings…") { SettingsWindow.shared.show() }
+                    .keyboardShortcut(",", modifiers: .command)
+            }
         }
     }
 }

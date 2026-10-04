@@ -233,6 +233,15 @@ preference, and is re-read every time Settings opens: it can be turned off in Sy
 Settings › General › Login Items at any time, and macOS sends no notification when that
 happens. If it has been switched off there, Settings says so and links to that pane.
 
+## Dock and menu bar
+
+**Settings › Dock and menu bar** has **Show in Dock** (off by default) and **Show in
+menu bar** (on), in any combination. Right-clicking the Dock icon offers **Settings…**.
+With both off, NetworkToggle keeps working with no icon; open it again from Applications
+or Spotlight to get back to Settings. Settings is an AppKit-hosted window
+(`SettingsWindow.swift`) rather than a SwiftUI `Settings` scene, because that scene can
+only be opened from inside a SwiftUI view, and with both icons hidden there is none.
+
 ## Diagnostics
 
 NetworkToggle appends what it decides to `~/Library/Logs/NetworkToggle.log` — which

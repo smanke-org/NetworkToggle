@@ -59,8 +59,17 @@ struct SettingsView: View {
                 Button("Clear declined connections") { controller.clearDeclined() }
             }
 
-            Section("Menu bar") {
+            Section("Dock and menu bar") {
+                Toggle("Show in Dock", isOn: $settings.showInDock)
+                    .help("Adds a Dock icon whose right-click menu opens Settings.")
+                Toggle("Show in menu bar", isOn: $settings.showInMenuBar)
                 Toggle("Show the connection name", isOn: $settings.showNameInMenuBar)
+                    .disabled(!settings.showInMenuBar)
+                if !settings.showInDock && !settings.showInMenuBar {
+                    Text(AppPresence.hiddenEverywhereNote(appName: "NetworkToggle", settingsName: "Settings"))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Section("Updates") {
