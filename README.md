@@ -273,12 +273,13 @@ could only be answered by reproducing with a special build.
 open -n --env NETWORKTOGGLE_UI_PREVIEW=1 --env NETWORKTOGGLE_DEBUG=1 /Applications/NetworkToggle.app
 ```
 
-Icon: `./Tools/make_icns.sh` regenerates `Resources/AppIcon.icns`. The RJ45 socket is
-drawn once in `Sources/NetworkToggle/ConnectorShape.swift` and compiled into both the
-app and the icon generator, so the menu bar glyph and the app icon cannot drift apart.
-Edit the path there, not the binary.
+Icon: `./Tools/make_icns.sh` regenerates `Resources/AppIcon.icns` from
+`Tools/generate_icon.swift`, which draws the gray "Nt" element tile shared in style with
+the sibling apps: a full tile for 128pt and up, and a nameless one for 16-64pt. The
+menu bar glyph is a separate drawing, the RJ45 socket in
+`Sources/NetworkToggle/ConnectorShape.swift`.
 
 The menu bar glyph carries state in its weight: solid while a wired connection is
 carrying traffic, hollow while it is not, badged when a wired link is sitting idle, and
-struck through when nothing is connected. It drops the seven dividers between the eight
-contacts that the app icon draws — at 18x16 they are under a pixel apart and smear.
+struck through when nothing is connected. It has no dividers between the eight contacts —
+at 18x16 they would be under a pixel apart and smear.

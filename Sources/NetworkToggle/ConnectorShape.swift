@@ -2,7 +2,7 @@ import AppKit
 
 /// The RJ45 socket seen head-on: the wide contact block across the top and the stepped
 /// keyway that the plug's latch drops into below. Drawn as a path so it renders crisply
-/// at 16pt in the menu bar and at 1024px for the app icon from one definition.
+/// at 16pt in the menu bar.
 ///
 /// SF Symbols has no RJ45 glyph — `cable.connector` is a Thunderbolt-style oval — so
 /// this is hand-drawn. The face-on socket is the recognisable Ethernet mark; a plug in
