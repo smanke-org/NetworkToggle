@@ -21,6 +21,8 @@ final class WiredArrivalNotifier {
     var onMoveTraffic: (() -> Void)?
 
     private var panel: NSPanel?
+    /// A switch offer is on screen, waiting for the user's answer.
+    var isOffering: Bool { panel != nil }
     private var dismissal: Task<Void, Never>?
 
     /// The last offer made, so a link that flaps does not reopen this repeatedly.

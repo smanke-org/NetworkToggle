@@ -157,9 +157,15 @@ only be opened from inside a SwiftUI view, and with both icons hidden there is n
 ## Updates
 
 NetworkToggle updates itself from the latest GitHub release's `.dmg` asset — a push
-alone ships nothing to an installed copy. "Check for Updates…" in the menu does it on
-demand; the launch check is silent unless there is something to offer, and a version you
-skip is not raised again on its own.
+alone ships nothing to an installed copy. It checks a few seconds after launch and every
+30 minutes, and Settings › Updates decides what happens when it finds one:
+
+- **Ask me first** (the default): a notification and an "Update to …" menu item; nothing
+  installs until you confirm. A version you skip is not raised again on its own.
+- **Install automatically**: the update is downloaded and verified straight away, then
+  installed once no network switch is in progress or waiting for your answer, no app is
+  presenting or keeping the display awake, and the Mac hasn't been used for 2 minutes.
+- **Don't check**: "Check for Updates…" in the menu still works.
 
 A downloaded build is refused unless it passes `codesign --verify --deep --strict`,
 carries the **same Team ID as the running copy**, and passes Gatekeeper assessment
@@ -202,6 +208,15 @@ silently ignores it.
 
 Both the app *and* the disk image need their own notarization ticket: a download picks
 up a quarantine attribute and Gatekeeper checks the image before it looks at the app.
+
+## Settings sync
+
+Turn on "Sync settings with your other Macs" in Settings and what happens when a wired
+connection appears, the settle delay, what the menu bar shows, where NetworkToggle appears
+and the update choice follow you to every Mac on the same iCloud account, through
+`iCloud Drive/NetworkToggle/Settings.plist`. Declined network services and the helper's
+approval stay on each Mac. A brand-new install that finds this file turns sync on and
+starts from your settings.
 
 ## Architecture
 

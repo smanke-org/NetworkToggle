@@ -8,7 +8,19 @@ struct NetworkToggleApp: App {
     @State private var settings = AppSettings.shared
 
     init() {
+        // Before anything saves a setting: an empty domain means a brand-new install.
+        let newInstall = SettingsSync.domainIsEmpty()
         let model = AppModel()
+        // An automatic update restarts the app and its helper; never mid-switch.
+        AutoUpdater.shared.appBusyReason = {
+            if let busy = model.controller.busyMessage { return "busy: \(busy)" }
+            if model.notifier.isOffering { return "a switch offer is waiting for an answer" }
+            return nil
+        }
+        SettingsSync.shared.onApply = { AppSettings.shared.reload() }
+        if newInstall { SettingsSync.shared.adoptOnNewInstall() }
+        SettingsSync.shared.start()
+        AutoUpdater.shared.start()
         _model = State(initialValue: model)
         SettingsWindow.shared.makeContent = {
             AnyView(SettingsView(helper: model.helper, controller: model.controller))

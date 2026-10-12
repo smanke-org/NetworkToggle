@@ -34,7 +34,6 @@ final class AppModel {
         helper.refreshState()
         monitor.start()
         openPreviewWindowIfRequested()
-        scheduleLaunchUpdateCheck()
         retireStaleHelper()
         startHelperStateWatch()
     }
@@ -66,15 +65,6 @@ final class AppModel {
         helper.refreshState()
         if !helper.state.isReady, helperStateTimer == nil {
             startHelperStateWatch()
-        }
-    }
-
-    /// Deferred so startup is not waiting on the network, and silent unless there is
-    /// something to offer.
-    private func scheduleLaunchUpdateCheck() {
-        guard AppSettings.shared.checkForUpdatesAtLaunch else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-            UpdateController.checkForUpdates(silent: true)
         }
     }
 

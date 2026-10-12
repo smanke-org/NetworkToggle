@@ -398,7 +398,11 @@ struct MenuContentView: View {
                 }
             }
 
-            if let pending = updates.pending {
+            if let staged = AutoUpdater.shared.staged {
+                MenuRowButton(title: "Update to \(staged.version) Now", systemImage: "arrow.down.circle.fill") {
+                    AutoUpdater.shared.installNow()
+                }
+            } else if let pending = updates.pending {
                 MenuRowButton(title: "Update to \(pending)…", systemImage: "arrow.down.circle.fill") {
                     UpdateController.checkForUpdates()
                 }

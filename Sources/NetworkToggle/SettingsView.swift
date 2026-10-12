@@ -72,25 +72,7 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Updates") {
-                Toggle("Check for updates at launch", isOn: $settings.checkForUpdatesAtLaunch)
-                Text("The launch check never installs anything on its own — it puts an "
-                     + "\u{201C}Update to…\u{201D} item in the menu and waits for you. Updates are "
-                     + "refused unless they are signed by the same developer as this copy "
-                     + "and notarized by Apple.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                HStack {
-                    Button("Check Now") { UpdateController.checkForUpdates() }
-                    if let skipped = settings.skippedUpdateVersion {
-                        Spacer()
-                        Button("Stop skipping \(skipped)") {
-                            settings.skippedUpdateVersion = nil
-                        }
-                    }
-                }
-            }
+            SyncUpdateSections()
 
             Section("Helper") {
                 LabeledContent("Status", value: helperDescription)

@@ -98,6 +98,17 @@ final class AppSettings {
         skippedUpdateVersion = defaults.string(forKey: "skippedUpdateVersion")
     }
 
+    /// Re-reads the synced settings after another Mac's were adopted.
+    func reload() {
+        if let behaviour = WiredArrival(rawValue: defaults.string(forKey: "wiredArrival") ?? "") { wiredArrival = behaviour }
+        autoSwitchForcesReconnect = defaults.bool(forKey: "autoSwitchForce")
+        promptForNewServices = defaults.bool(forKey: "promptNewServices")
+        settleDelaySeconds = defaults.integer(forKey: "settleDelay")
+        showNameInMenuBar = defaults.bool(forKey: "showNameInMenuBar")
+        if showInDock != AppPresence.showInDock { showInDock = AppPresence.showInDock }
+        if showInMenuBar != AppPresence.showInMenuBar { showInMenuBar = AppPresence.showInMenuBar }
+    }
+
     private func store(_ value: Any, _ key: String) {
         defaults.set(value, forKey: key)
     }
