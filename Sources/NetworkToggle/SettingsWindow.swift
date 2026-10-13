@@ -16,12 +16,18 @@ final class SettingsWindow {
     func show() {
         if window == nil, let makeContent {
             let hosting = NSHostingController(rootView: makeContent())
-            // The window takes the view's own size; without this a grouped Form has
-            // no natural height and the window opens as a sliver.
-            hosting.sizingOptions = [.preferredContentSize]
+            // A fixed, screen-capped height with the Form scrolling inside it. Sizing
+            // the window to the Form's full height crashed once the Form grew taller
+            // than the screen: AppKit clamped the window, SwiftUI asked to grow again,
+            // and AppKit aborted the endless update-constraints loop.
+            hosting.sizingOptions = []
             let window = NSWindow(contentViewController: hosting)
             window.title = "NetworkToggle Settings"
-            window.styleMask = [.titled, .closable]
+            window.styleMask = [.titled, .closable, .resizable]
+            let available = (NSScreen.main?.visibleFrame.height ?? 800) - 80
+            window.setContentSize(NSSize(width: 460, height: min(760, available)))
+            window.contentMinSize = NSSize(width: 460, height: 300)
+            window.contentMaxSize = NSSize(width: 460, height: CGFloat.greatestFiniteMagnitude)
             window.isReleasedWhenClosed = false
             window.center()
             self.window = window

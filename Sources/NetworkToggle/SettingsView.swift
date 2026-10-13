@@ -89,7 +89,7 @@ struct SettingsView: View {
         .formStyle(.grouped)
         .onAppear { login.refresh() }
         .frame(width: 460)
-        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxHeight: .infinity)
     }
 
     private var helperDescription: String {
