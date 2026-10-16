@@ -423,6 +423,13 @@ struct MenuContentView: View {
             MenuRowButton(title: "Settings…", systemImage: "gearshape") {
                 SettingsWindow.shared.show()
             }
+            MenuRowButton(title: "About NetworkToggle", systemImage: "info.circle") {
+                NSApp.activate(ignoringOtherApps: true)
+                NSApp.orderFrontStandardAboutPanel(nil)
+            }
+            MenuRowButton(title: "Our other apps…", systemImage: "square.grid.2x2") {
+                if let url = URL(string: "https://stevemanke.com/") { NSWorkspace.shared.open(url) }
+            }
             MenuRowButton(title: "Quit NetworkToggle", systemImage: "power") {
                 NSApp.terminate(nil)
             }
