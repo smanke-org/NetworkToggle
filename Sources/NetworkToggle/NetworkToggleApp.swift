@@ -45,6 +45,10 @@ struct NetworkToggleApp: App {
         .menuBarExtraStyle(.window)
         .commands {
             // The app menu, while there is a Dock icon: Settings… opens the same window.
+            CommandGroup(after: .appInfo) {
+                // Right below About: the developer's site, which lists every app.
+                Button("Our other apps…") { if let url = URL(string: "https://stevemanke.com/") { NSWorkspace.shared.open(url) } }
+            }
             CommandGroup(replacing: .appSettings) {
                 Button("Settings…") { SettingsWindow.shared.show() }
                     .keyboardShortcut(",", modifiers: .command)
