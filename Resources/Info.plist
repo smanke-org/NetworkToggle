@@ -16,6 +16,17 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.1.1</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>NetworkToggle</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>networktoggle</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1.1.1</string>
 	<key>LSMinimumSystemVersion</key>
@@ -26,5 +37,56 @@
 	<string>Copyright © 2026 Steve Manke</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Before switching you to a wired connection automatically, NetworkToggle pings your router to make sure the link actually works.</string>
+	<key>ToolHUDActions</key>
+	<array>
+		<dict>
+			<key>activates</key>
+			<false/>
+			<key>id</key>
+			<string>use-wired</string>
+			<key>shortTitle</key>
+			<string>Use wired</string>
+			<key>symbol</key>
+			<string>cable.connector</string>
+			<key>title</key>
+			<string>Switch to the wired connection</string>
+		</dict>
+		<dict>
+			<key>activates</key>
+			<false/>
+			<key>id</key>
+			<string>move-connections</string>
+			<key>shortTitle</key>
+			<string>Move off Wi-Fi</string>
+			<key>symbol</key>
+			<string>arrow.right.arrow.left</string>
+			<key>title</key>
+			<string>Move connections off Wi-Fi</string>
+		</dict>
+		<dict>
+			<key>activates</key>
+			<false/>
+			<key>id</key>
+			<string>toggle-wifi</string>
+			<key>shortTitle</key>
+			<string>Wi-Fi on/off</string>
+			<key>symbol</key>
+			<string>wifi</string>
+			<key>title</key>
+			<string>Turn Wi-Fi on or off</string>
+		</dict>
+		<dict>
+			<key>activates</key>
+			<false/>
+			<key>id</key>
+			<string>undo</string>
+			<key>shortTitle</key>
+			<string>Undo switch</string>
+			<key>symbol</key>
+			<string>arrow.uturn.backward</string>
+			<key>title</key>
+			<string>Undo the last switch</string>
+		</dict>
+	</array>
 </dict>
 </plist>

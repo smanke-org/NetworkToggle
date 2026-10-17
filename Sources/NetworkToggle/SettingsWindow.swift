@@ -40,6 +40,9 @@ final class SettingsWindow {
 /// The Dock icon's menu, and what happens when the app is opened again.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    /// Runs a `networktoggle://` URL; set by NetworkToggleApp.init, which owns the model.
+    static var onURL: ((URL) -> Void)?
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         // A menu bar app; it has a Dock icon only if the user turned one on.
         if AppPresence.showInDock { AppPresence.applyDock() }
@@ -59,5 +62,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func showSettings() {
         SettingsWindow.shared.show()
+    }
+
+    /// `networktoggle://use-wired`, `move-connections`, `toggle-wifi` and `undo` (from
+    /// ToolHUD, Shortcuts or a script) do what the menu does; anything else opens Settings.
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls where url.scheme == "networktoggle" {
+            switch url.host {
+            case "use-wired", "move-connections", "toggle-wifi", "undo": Self.onURL?(url)
+            default: showSettings()
+            }
+        }
     }
 }

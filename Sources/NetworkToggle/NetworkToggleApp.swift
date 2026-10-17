@@ -25,6 +25,27 @@ struct NetworkToggleApp: App {
         SettingsWindow.shared.makeContent = {
             AnyView(SettingsView(helper: model.helper, controller: model.controller))
         }
+        AppDelegate.onURL = { url in
+            let monitor = model.monitor, controller = model.controller!
+            switch url.host {
+            case "use-wired":
+                // The fastest working wired connection, and the stragglers moved over with it.
+                monitor.refresh()
+                let wired = monitor.statuses.filter { $0.service.isWired && $0.isUsable }
+                guard let best = wired.max(by: { ($0.speedMbps ?? 0) < ($1.speedMbps ?? 0) }), !best.isPrimary else { return }
+                Task { await controller.switchTo(best, force: true) }
+            case "move-connections":
+                Task { await controller.moveConnectionsToActive() }
+            case "toggle-wifi":
+                guard let wifi = monitor.wiFi else { return }
+                Task { await controller.toggleWiFi(on: !wifi.linkUp) }
+            case "undo":
+                guard controller.undoableOrder != nil else { return }
+                Task { await controller.undo() }
+            default:
+                break
+            }
+        }
     }
 
     var body: some Scene {

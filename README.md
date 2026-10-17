@@ -137,6 +137,13 @@ would pull a full-tunnel VPN off its connection asks first. To choose which conn
 VPN uses, set the order while the VPN is disconnected, or change it and then reconnect
 the VPN.
 
+## URLs
+
+For ToolHUD, Shortcuts or scripts: `networktoggle://use-wired` switches to the fastest working
+wired connection and moves connections off Wi-Fi with it, `move-connections` moves connections
+left on Wi-Fi, `toggle-wifi` turns Wi-Fi on or off, and `undo` puts the previous order back.
+They need the helper, as the menu's buttons do.
+
 ## Opening at login
 
 **Settings › General › Open NetworkToggle at login** registers the app as a login item
