@@ -164,8 +164,7 @@ only be opened from inside a SwiftUI view, and with both icons hidden there is n
 ## Updates
 
 NetworkToggle updates itself from the latest GitHub release's `.dmg` asset — a push
-alone ships nothing to an installed copy. It checks a few seconds after launch and every
-30 minutes, and Settings › Updates decides what happens when it finds one:
+alone ships nothing to an installed copy. It checks once a day, or as often as you choose in Settings (a number of hours, days, weeks or months), and Settings › Updates decides what happens when it finds one:
 
 - **Ask me first** (the default): a notification and an "Update to …" menu item; nothing
   installs until you confirm. A version you skip is not raised again on its own.
