@@ -18,6 +18,8 @@ struct NetworkToggleApp: App {
             return nil
         }
         SettingsSync.shared.onApply = { AppSettings.shared.reload() }
+        // NSApp exists only once the app has started.
+        DispatchQueue.main.async { AppAppearance.start() }
         if newInstall { SettingsSync.shared.adoptOnNewInstall() }
         SettingsSync.shared.start()
         AutoUpdater.shared.start()
