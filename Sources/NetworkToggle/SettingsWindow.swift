@@ -44,6 +44,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     static var onURL: ((URL) -> Void)?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        #if DEBUG
+        if let snapshot = ProcessInfo.processInfo.environment["NETWORKTOGGLE_DEBUG_HELP_TEST"] {
+            DebugHelpTest.run(snapshot: snapshot, delegate: nil)
+            return
+        }
+        #endif
         // A menu bar app; it has a Dock icon only if the user turned one on.
         if AppPresence.showInDock { AppPresence.applyDock() }
     }

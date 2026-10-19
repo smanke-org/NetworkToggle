@@ -11,6 +11,14 @@ struct NetworkToggleApp: App {
         // Before anything saves a setting: an empty domain means a brand-new install.
         let newInstall = SettingsSync.domainIsEmpty()
         let model = AppModel()
+        #if DEBUG
+        // A Help test run shares the installed app's settings and helper, so it starts
+        // nothing else: no sync, no updates, no switching.
+        if ProcessInfo.processInfo.environment["NETWORKTOGGLE_DEBUG_HELP_TEST"] != nil {
+            _model = State(initialValue: model)
+            return
+        }
+        #endif
         // An automatic update restarts the app and its helper; never mid-switch.
         AutoUpdater.shared.appBusyReason = {
             if let busy = model.controller.busyMessage { return "busy: \(busy)" }
@@ -71,6 +79,10 @@ struct NetworkToggleApp: App {
             CommandGroup(after: .appInfo) {
                 // Right below About: the developer's site, which lists every app.
                 Button("Our other apps…") { if let url = URL(string: "https://stevemanke.com/") { NSWorkspace.shared.open(url) } }
+            }
+            CommandGroup(replacing: .help) {
+                Button("NetworkToggle Help") { HelpWindow.shared.show() }
+                    .keyboardShortcut("?", modifiers: .command)
             }
             CommandGroup(replacing: .appSettings) {
                 Button("Settings…") { SettingsWindow.shared.show() }

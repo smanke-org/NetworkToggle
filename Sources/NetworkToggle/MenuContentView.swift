@@ -420,6 +420,9 @@ struct MenuContentView: View {
                 }
             }
 
+            MenuRowButton(title: "NetworkToggle Help", systemImage: "questionmark.circle") {
+                HelpWindow.shared.show()
+            }
             MenuRowButton(title: "Settings…", systemImage: "gearshape") {
                 SettingsWindow.shared.show()
             }

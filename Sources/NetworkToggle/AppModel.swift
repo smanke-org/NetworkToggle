@@ -24,6 +24,9 @@ final class AppModel {
     init() {
         strandedMonitor = StrandedTrafficMonitor(helper: helper)
         controller = SwitchController(monitor: monitor, helper: helper, notifier: notifier)
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["NETWORKTOGGLE_DEBUG_HELP_TEST"] != nil { return }
+        #endif
         notifier.start()
         notifier.onMoveTraffic = { [weak self] in
             Task { @MainActor in await self?.controller.moveConnectionsToActive() }

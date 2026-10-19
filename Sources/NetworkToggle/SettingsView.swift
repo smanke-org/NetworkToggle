@@ -86,6 +86,13 @@ struct SettingsView: View {
             Section {
                 LabeledContent("Version", value: AppInfo.displayVersion)
             }
+
+            // The round Help button in the corner, as macOS does.
+            HStack {
+                Spacer()
+                HelpButton(topic: "getting-started").fixedSize()
+            }
+            .listRowBackground(Color.clear)
         }
         .formStyle(.grouped)
         .onAppear { login.refresh() }
