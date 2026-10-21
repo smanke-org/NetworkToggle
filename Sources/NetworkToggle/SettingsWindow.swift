@@ -71,11 +71,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     /// `networktoggle://use-wired`, `move-connections`, `toggle-wifi` and `undo` (from
-    /// ToolHUD, Shortcuts or a script) do what the menu does; anything else opens Settings.
+    /// ToolHUD, Shortcuts or a script) do what the menu does, and `panel` opens the menu's
+    /// panel as a window; anything else opens Settings.
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls where url.scheme == "networktoggle" {
             switch url.host {
-            case "use-wired", "move-connections", "toggle-wifi", "undo": Self.onURL?(url)
+            case "use-wired", "move-connections", "toggle-wifi", "undo", "panel": Self.onURL?(url)
             default: showSettings()
             }
         }

@@ -142,7 +142,8 @@ the VPN.
 For ToolHUD, Shortcuts or scripts: `networktoggle://use-wired` switches to the fastest working
 wired connection and moves connections off Wi-Fi with it, `move-connections` moves connections
 left on Wi-Fi, `toggle-wifi` turns Wi-Fi on or off, and `undo` puts the previous order back.
-They need the helper, as the menu's buttons do.
+They need the helper, as the menu's buttons do. `networktoggle://panel` opens the menu bar
+panel in a window of its own.
 
 ## Opening at login
 

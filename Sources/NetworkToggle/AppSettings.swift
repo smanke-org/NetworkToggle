@@ -107,6 +107,7 @@ final class AppSettings {
         showNameInMenuBar = defaults.bool(forKey: "showNameInMenuBar")
         if showInDock != AppPresence.showInDock { showInDock = AppPresence.showInDock }
         if showInMenuBar != AppPresence.showInMenuBar { showInMenuBar = AppPresence.showInMenuBar }
+        MenuHub.shared.reload()
     }
 
     private func store(_ value: Any, _ key: String) {

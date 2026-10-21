@@ -6,6 +6,7 @@ struct SettingsView: View {
     let controller: SwitchController
 
     @State private var settings = AppSettings.shared
+    @State private var hub = MenuHub.shared
     @State private var login = LaunchAtLogin.shared
 
     var body: some View {
@@ -66,6 +67,8 @@ struct SettingsView: View {
                 Toggle("Show in menu bar", isOn: $settings.showInMenuBar)
                 Toggle("Show the connection name", isOn: $settings.showNameInMenuBar)
                     .disabled(!settings.showInMenuBar)
+                Toggle("Put in ToolHUD’s menu while ToolHUD is running", isOn: $hub.foldIntoToolHUD)
+                    .help("ToolHUD shows NetworkToggle’s actions as a submenu of its own, and NetworkToggle’s icon leaves the menu bar until ToolHUD quits.")
                 if !settings.showInDock && !settings.showInMenuBar {
                     Text(AppPresence.hiddenEverywhereNote(appName: "NetworkToggle", settingsName: "Settings"))
                         .font(.caption)

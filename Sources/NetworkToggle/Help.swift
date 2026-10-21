@@ -46,6 +46,7 @@ enum Help {
             .heading("The helper"),
             .text("Changing the order of network services needs administrator rights, so NetworkToggle installs a small helper the first time. Approve it when macOS asks, in System Settings › General › Login Items. Settings › Helper shows its status, and Remove helper takes it away."),
             .tip("Turn on \"Show the connection name\" in Settings to see the active connection's name next to the menu bar icon."),
+            .tip("While ToolHUD is running, NetworkToggle's main actions move into ToolHUD's menu bar menu as a submenu, and the icon here steps aside until ToolHUD quits. Show Connections… there opens the full panel under ToolHUD's icon. To keep the icon, turn off \"Put in ToolHUD's menu while ToolHUD is running\" in Settings."),
         ]),
 
         HelpTopic(id: "switching", title: "Switching Connections", symbol: "arrow.left.arrow.right", blocks: [
@@ -80,6 +81,7 @@ enum Help {
                 ("networktoggle://move-connections", "Move connections still on the old link"),
                 ("networktoggle://toggle-wifi", "Turn Wi-Fi off or on"),
                 ("networktoggle://undo", "Undo the last change"),
+                ("networktoggle://panel", "Open the menu bar panel in a window"),
             ]),
             .text("Use these links from Shortcuts, scripts or a launcher. ToolHUD's NetworkToggle buttons use them."),
         ]),

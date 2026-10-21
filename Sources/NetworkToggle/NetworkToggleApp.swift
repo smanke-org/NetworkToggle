@@ -6,6 +6,7 @@ struct NetworkToggleApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var model: AppModel
     @State private var settings = AppSettings.shared
+    @State private var hub = MenuHub.shared
 
     init() {
         // Before anything saves a setting: an empty domain means a brand-new install.
@@ -35,6 +36,8 @@ struct NetworkToggleApp: App {
         SettingsWindow.shared.makeContent = {
             AnyView(SettingsView(helper: model.helper, controller: model.controller))
         }
+        let hubMenu = HubMenu(model: model)
+        hubMenu.start()
         AppDelegate.onURL = { url in
             let monitor = model.monitor, controller = model.controller!
             switch url.host {
@@ -52,6 +55,8 @@ struct NetworkToggleApp: App {
             case "undo":
                 guard controller.undoableOrder != nil else { return }
                 Task { await controller.undo() }
+            case "panel":
+                hubMenu.showPanel()
             default:
                 break
             }
@@ -60,7 +65,10 @@ struct NetworkToggleApp: App {
 
     var body: some Scene {
         // Settings can remove the menu bar icon; the app then lives in the Dock, or nowhere.
-        MenuBarExtra(isInserted: $settings.showInMenuBar) {
+        // ToolHUD can also take it into its own menu while it runs; that never changes the
+        // setting, so the icon comes back when ToolHUD quits.
+        MenuBarExtra(isInserted: Binding(get: { settings.showInMenuBar && !hub.isHosted },
+                                         set: { if !hub.isHosted { settings.showInMenuBar = $0 } })) {
             MenuContentView(
                 monitor: model.monitor,
                 helper: model.helper,
@@ -99,7 +107,9 @@ struct MenuBarLabel: View {
     let monitor: NetworkMonitor
     @State private var settings = AppSettings.shared
 
-    private var icon: NSImage {
+    private var icon: NSImage { Self.image(for: monitor) }
+
+    static func image(for monitor: NetworkMonitor) -> NSImage {
         guard let primary = monitor.primary else {
             return ConnectorShape.menuBarImage(filled: false, slashed: true)
         }
