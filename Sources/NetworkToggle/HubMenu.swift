@@ -46,6 +46,14 @@ final class HubMenu: NSObject {
         } else {
             menu.addItem(disabled: "No idle wired connection")
         }
+        // Connections opened before a wired link took over stay on Wi-Fi. The panel names them,
+        // but its icon is hidden while ToolHUD hosts this menu, so the way to move them has to
+        // be here too.
+        if let active = monitor.vpnCarrier ?? monitor.primary, !active.service.isWiFi,
+           let wifi = monitor.wiFi, wifi.linkUp, wifi.ipv4 != nil, model.helper.state.isReady {
+            menu.addItem(withTitle: "Move Connections to \(active.name)", action: #selector(moveConnections), target: self)
+                .toolTip = "Turns Wi-Fi off until connections still on it reconnect over \(active.name), then turns it back on."
+        }
         if let wifi = monitor.wiFi, model.helper.state.isReady {
             menu.addItem(withTitle: wifi.linkUp ? "Turn Wi-Fi Off" : "Turn Wi-Fi On", action: #selector(toggleWiFi), target: self)
         }
@@ -91,6 +99,8 @@ final class HubMenu: NSObject {
         guard let target = monitor.idleWired.first else { return }
         Task { await controller.switchTo(target, force: force) }
     }
+
+    @objc private func moveConnections() { Task { await controller.moveConnectionsToActive() } }
 
     @objc private func toggleWiFi() {
         guard let wifi = monitor.wiFi else { return }

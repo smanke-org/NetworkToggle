@@ -24,6 +24,7 @@ final class WiredArrivalNotifier {
     /// A switch offer is on screen, waiting for the user's answer.
     var isOffering: Bool { panel != nil }
     private var dismissal: Task<Void, Never>?
+    private var screenObserver: NSObjectProtocol?
 
     /// The last offer made, so a link that flaps does not reopen this repeatedly.
     private var lastOffer: (serviceID: String, at: ContinuousClock.Instant)?
@@ -49,7 +50,7 @@ final class WiredArrivalNotifier {
     func confirm(_ status: ServiceStatus, revertTo wifi: ServiceStatus?, strandedOnWiFi: Int) async {
         guard notRepeated(status) else { return }
         present(status: status, force: false, alreadyActive: wifi, strandedOnWiFi: strandedOnWiFi)
-        Diagnostics.note("wired arrival: confirmed \(status.name) (already active)")
+        Diagnostics.note("wired arrival: confirmed \(status.name) (already active), \(strandedOnWiFi) on Wi-Fi")
         log.notice("Confirmed \(status.name, privacy: .public) already active")
     }
 
@@ -64,8 +65,26 @@ final class WiredArrivalNotifier {
     func dismiss() {
         dismissal?.cancel()
         dismissal = nil
+        if let screenObserver { NotificationCenter.default.removeObserver(screenObserver) }
+        screenObserver = nil
         panel?.orderOut(nil)
         panel = nil
+    }
+
+    /// Top right, just under the menu bar, where a notification would have appeared.
+    ///
+    /// On the screen with the menu bar as it is now: `NSScreen.main` follows the key window,
+    /// which an accessory app usually doesn't have, and right after a wake it can still
+    /// describe a screen that has gone.
+    private func place(_ panel: NSPanel) {
+        guard let screen = NSScreen.screens.first else {
+            Diagnostics.note("wired arrival: no screen to show the panel on")
+            return
+        }
+        let area = screen.visibleFrame
+        let size = panel.frame.size
+        panel.setFrameOrigin(NSPoint(x: area.maxX - size.width - 16, y: area.maxY - size.height - 12))
+        Diagnostics.note("wired arrival: panel at \(NSStringFromRect(panel.frame)) on \(screen.localizedName)")
     }
 
     private func present(status: ServiceStatus, force: Bool, alreadyActive wifi: ServiceStatus?, strandedOnWiFi: Int) {
@@ -124,16 +143,19 @@ final class WiredArrivalNotifier {
         panel.level = .statusBar
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
 
-        // Top right, just under the menu bar, where a notification would have appeared.
-        if let screen = NSScreen.main {
-            let area = screen.visibleFrame
-            panel.setFrameOrigin(NSPoint(
-                x: area.maxX - hosting.fittingSize.width - 16,
-                y: area.maxY - hosting.fittingSize.height - 12
-            ))
-        }
+        place(panel)
         panel.orderFrontRegardless()
         self.panel = panel
+        // Waking onto a dock is when this appears, and it is also when the displays are still
+        // being rearranged — the lid's screen goes away and the dock's arrives. Follow them.
+        screenObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main
+        ) { _ in
+            MainActor.assumeIsolated { [weak self] in
+                guard let self, let panel = self.panel else { return }
+                self.place(panel)
+            }
+        }
 
         dismissal = Task { @MainActor [weak self] in
             try? await Task.sleep(for: Self.visibleFor)
@@ -174,6 +196,7 @@ private struct WiredArrivalOffer: View {
             Text(question)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
 
             // Two buttons of equal weight: the colour says which is which, so neither is
             // the one you land on by accident. Drawn rather than tinted, because a panel
