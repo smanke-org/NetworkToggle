@@ -305,3 +305,7 @@ The menu bar glyph carries state in its weight: solid while a wired connection i
 carrying traffic, hollow while it is not, badged when a wired link is sitting idle, and
 struck through when nothing is connected. It has no dividers between the eight contacts —
 at 18x16 they would be under a pixel apart and smear.
+
+## License
+
+© 2026 Steve Manke. All rights reserved.
