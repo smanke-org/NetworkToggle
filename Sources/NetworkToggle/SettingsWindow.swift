@@ -37,6 +37,17 @@ final class SettingsWindow {
     }
 }
 
+/// Quits NetworkToggle without asking: for quitting itself (installing an update, ending a test).
+@MainActor
+enum QuitConfirmation {
+    private(set) static var confirmed = false
+
+    static func quitNow() {
+        confirmed = true
+        NSApp.terminate(nil)
+    }
+}
+
 /// The Dock icon's menu, and what happens when the app is opened again.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -47,6 +58,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         #if DEBUG
         if let snapshot = ProcessInfo.processInfo.environment["NETWORKTOGGLE_DEBUG_HELP_TEST"] {
             DebugHelpTest.run(snapshot: snapshot, delegate: nil)
+            return
+        }
+        if let how = ProcessInfo.processInfo.environment["NETWORKTOGGLE_DEBUG_QUIT_TEST"] {
+            DebugQuitTest.run(how)
             return
         }
         #endif
@@ -68,6 +83,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func showSettings() {
         SettingsWindow.shared.show()
+    }
+
+    /// Quitting asks first, while "Ask before quitting" is on in Settings › General. Not when
+    /// the Mac is logging out, restarting or shutting down (macOS gives the quit a reason
+    /// then), and not when NetworkToggle quits itself to install an update.
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        let systemQuit = NSAppleEventManager.shared().currentAppleEvent?
+            .attributeDescriptor(forKeyword: AEKeyword(kAEQuitReason)) != nil
+        guard AppSettings.shared.confirmQuit, !QuitConfirmation.confirmed, !systemQuit else { return .terminateNow }
+
+        // A menu bar app needs to be a regular one for the alert to come to the front; the
+        // old policy goes back a runloop turn later, once the alert is gone (AppKit ignores
+        // it while the modal still holds the app active).
+        let previousPolicy = NSApp.activationPolicy()
+        NSApp.setActivationPolicy(.regular)
+        defer { DispatchQueue.main.async { NSApp.setActivationPolicy(previousPolicy) } }
+
+        let alert = NSAlert()
+        alert.messageText = "Quit \(AppInfo.name)?"
+        alert.informativeText = "Automatic switching and wired-connection offers stop until you open \(AppInfo.name) again."
+        // NSAlert puts a Cancel button on Esc, and Quit has no key, so Return does nothing:
+        // quitting takes a click on Quit, never a stray keystroke.
+        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: "Quit").keyEquivalent = ""
+        alert.showsSuppressionButton = true
+        alert.suppressionButton?.title = "Don't ask again"
+        UpdateController.bringForward(alert)
+
+        guard alert.runModal() == .alertSecondButtonReturn else { return .terminateCancel }
+        if alert.suppressionButton?.state == .on { AppSettings.shared.confirmQuit = false }
+        return .terminateNow
     }
 
     /// `networktoggle://use-wired`, `move-connections`, `toggle-wifi` and `undo` (from

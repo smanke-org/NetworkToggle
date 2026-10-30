@@ -246,6 +246,7 @@ enum UpdateController {
 
     /// Hands the swap to a detached shell script, because the app cannot replace and
     /// relaunch itself while it is the one running.
+    @MainActor
     static func installAndRelaunch(from stagedApp: URL) throws {
         let destination = Bundle.main.bundlePath
         let staging = stagedApp.deletingLastPathComponent()
@@ -290,7 +291,7 @@ enum UpdateController {
                           destination, requirement, staging.path]
         try task.run()
 
-        NSApp.terminate(nil)
+        QuitConfirmation.quitNow()
     }
 
     // MARK: - Helpers
@@ -393,7 +394,7 @@ enum UpdateController {
     /// harness on macOS 27: without this, never active; with it, active and key
     /// within 0.25 s.
     @MainActor
-    private static func bringForward(_ alert: NSAlert) {
+    static func bringForward(_ alert: NSAlert) {
         alert.layout()
         NSApp.activate(ignoringOtherApps: true)
         alert.window.makeKeyAndOrderFront(nil)

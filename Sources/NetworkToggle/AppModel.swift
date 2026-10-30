@@ -25,7 +25,7 @@ final class AppModel {
         strandedMonitor = StrandedTrafficMonitor(helper: helper)
         controller = SwitchController(monitor: monitor, helper: helper, notifier: notifier)
         #if DEBUG
-        if ProcessInfo.processInfo.environment["NETWORKTOGGLE_DEBUG_HELP_TEST"] != nil { return }
+        if DebugQuitTest.isTestRun { return }
         #endif
         notifier.start()
         notifier.onMoveTraffic = { [weak self] in

@@ -24,7 +24,7 @@ struct SyncUpdateSections: View {
         } header: {
             Text("iCloud")
         } footer: {
-            Text("What happens when a wired connection appears, how long to wait, what the menu bar shows and where NetworkToggle appears follow you to every Mac signed in to the same iCloud account with sync turned on. Declined network services and the helper's approval stay on each Mac.")
+            Text("What happens when a wired connection appears, how long to wait, what the menu bar shows, where NetworkToggle appears and asking before quitting follow you to every Mac signed in to the same iCloud account with sync turned on. Declined network services and the helper's approval stay on each Mac.")
                 .font(.caption).foregroundStyle(.secondary)
         }
         Section {

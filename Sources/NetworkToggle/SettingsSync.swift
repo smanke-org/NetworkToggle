@@ -42,13 +42,14 @@ final class SettingsSync: ObservableObject {
         "promptNewServices",
         "settleDelay",
         "showNameInMenuBar", UpdatePolicy.key, UpdateInterval.valueKey, UpdateInterval.unitKey,
+        "confirmQuit",
     ]
 
     /// What each setting is when this Mac has never changed it, for settings without a
     /// registered default. Uploading these too means a Mac adopting the file never mistakes
     /// "at its default" for "missing".
     private static let fallbacks: [String: Any] = [
-        "showInDock": false, "showInMenuBar": true, MenuHub.foldKey: true, AppAppearance.key: AppAppearance.system.rawValue, "wiredArrival": "ask"
+        "showInDock": false, "showInMenuBar": true, MenuHub.foldKey: true, AppAppearance.key: AppAppearance.system.rawValue, "wiredArrival": "ask", "confirmQuit": true
     ]
 
     private var localModified: Date? {

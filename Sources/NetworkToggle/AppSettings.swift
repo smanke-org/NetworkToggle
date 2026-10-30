@@ -37,6 +37,9 @@ final class AppSettings {
     /// How long to let a freshly connected interface settle before judging it.
     var settleDelaySeconds: Int { didSet { store(settleDelaySeconds, "settleDelay") } }
 
+    /// Quitting asks first, so a stray ⌘Q doesn't stop automatic switching.
+    var confirmQuit: Bool { didSet { store(confirmQuit, "confirmQuit") } }
+
     /// Show the active interface's name next to the menu bar icon.
     var showNameInMenuBar: Bool { didSet { store(showNameInMenuBar, "showNameInMenuBar") } }
 
@@ -82,6 +85,7 @@ final class AppSettings {
             "settleDelay": 4,
             "showNameInMenuBar": false,
             "checkForUpdatesAtLaunch": true,
+            "confirmQuit": true,
         ])
         // Migrated from the old on/off switch: anyone who had automatic switching on now
         // gets asked first, which is the same trigger with the decision handed back.
@@ -95,6 +99,7 @@ final class AppSettings {
         settleDelaySeconds = defaults.integer(forKey: "settleDelay")
         showNameInMenuBar = defaults.bool(forKey: "showNameInMenuBar")
         checkForUpdatesAtLaunch = defaults.bool(forKey: "checkForUpdatesAtLaunch")
+        confirmQuit = defaults.bool(forKey: "confirmQuit")
         skippedUpdateVersion = defaults.string(forKey: "skippedUpdateVersion")
     }
 
@@ -105,6 +110,7 @@ final class AppSettings {
         promptForNewServices = defaults.bool(forKey: "promptNewServices")
         settleDelaySeconds = defaults.integer(forKey: "settleDelay")
         showNameInMenuBar = defaults.bool(forKey: "showNameInMenuBar")
+        confirmQuit = defaults.bool(forKey: "confirmQuit")
         if showInDock != AppPresence.showInDock { showInDock = AppPresence.showInDock }
         if showInMenuBar != AppPresence.showInMenuBar { showInMenuBar = AppPresence.showInMenuBar }
         MenuHub.shared.reload()

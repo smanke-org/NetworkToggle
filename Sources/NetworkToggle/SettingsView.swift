@@ -27,6 +27,8 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.red)
                 }
+                Toggle("Ask before quitting", isOn: $settings.confirmQuit)
+                    .help("Quitting NetworkToggle asks first, so a stray ⌘Q doesn't stop automatic switching.")
             }
 
             Section("Automatic switching") {

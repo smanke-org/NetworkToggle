@@ -13,10 +13,14 @@ struct NetworkToggleApp: App {
         let newInstall = SettingsSync.domainIsEmpty()
         let model = AppModel()
         #if DEBUG
-        // A Help test run shares the installed app's settings and helper, so it starts
-        // nothing else: no sync, no updates, no switching.
-        if ProcessInfo.processInfo.environment["NETWORKTOGGLE_DEBUG_HELP_TEST"] != nil {
+        // A Help or quit test run shares the installed app's settings and helper, so it
+        // starts nothing else: no sync, no updates, no switching.
+        if DebugQuitTest.isTestRun {
             _model = State(initialValue: model)
+            // Settings only shows here; the helper, login and sync are only read.
+            SettingsWindow.shared.makeContent = {
+                AnyView(SettingsView(helper: model.helper, controller: model.controller))
+            }
             return
         }
         #endif
