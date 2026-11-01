@@ -101,8 +101,6 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .onAppear { login.refresh() }
-        .frame(width: 460)
-        .frame(maxHeight: .infinity)
     }
 
     private var helperDescription: String {

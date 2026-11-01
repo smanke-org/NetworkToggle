@@ -87,6 +87,14 @@ enum Help {
             .text("Use these links from Shortcuts, scripts or a launcher. ToolHUD's NetworkToggle buttons use them."),
         ]),
 
+        HelpTopic(id: "updates", title: "Updates", symbol: "arrow.down.circle", blocks: [
+            .text("Settings › Updates chooses what NetworkToggle does when a new version is out: install it automatically while your Mac is idle and no switch is under way, ask you first, or not check at all. Check Now looks right away. Updating keeps your connection order and the helper."),
+            .heading("What's new"),
+            .text("The update window shows the notes for the latest releases, with the ones you don't have yet marked New. \"Don't remind me about this version\" is ticked to begin with: click Not Now with it ticked, and NetworkToggle stops reminding you about that version (Check Now still offers it). Untick it to be reminded again."),
+            .text("After an update that installed itself, Settings shows what changed the next time it opens. Tick \"Don't show this again\" to put it away. What's New… beside Check Now shows the notes any time."),
+            .tip("Settings can be dragged bigger to see more at once, and keeps the size you choose."),
+        ]),
+
         HelpTopic(id: "troubleshooting", title: "Troubleshooting", symbol: "wrench.and.screwdriver", blocks: [
             .heading("\"Setup needed\" in the menu"),
             .text("The helper isn't installed or approved. Click Install helper, then allow NetworkToggle in System Settings › General › Login Items."),

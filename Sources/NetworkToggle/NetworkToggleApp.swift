@@ -35,7 +35,7 @@ struct NetworkToggleApp: App {
         DispatchQueue.main.async { AppAppearance.start() }
         if newInstall { SettingsSync.shared.adoptOnNewInstall() }
         SettingsSync.shared.start()
-        AutoUpdater.shared.start()
+        AutoUpdater.shared.start(newInstall: newInstall)
         _model = State(initialValue: model)
         SettingsWindow.shared.makeContent = {
             AnyView(SettingsView(helper: model.helper, controller: model.controller))

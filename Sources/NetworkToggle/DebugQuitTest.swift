@@ -16,6 +16,7 @@ enum DebugQuitTest {
         #if DEBUG
         let env = ProcessInfo.processInfo.environment
         return env["NETWORKTOGGLE_DEBUG_HELP_TEST"] != nil || env["NETWORKTOGGLE_DEBUG_QUIT_TEST"] != nil
+            || env["NETWORKTOGGLE_DEBUG_UPDATE_NOTES"] != nil
         #else
         return false
         #endif
