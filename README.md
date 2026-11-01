@@ -9,6 +9,8 @@ never move off Wi-Fi. You find out an hour later when a big copy crawls. Network
 bar app that shows the connection actually carrying your traffic, switches to wired when a dock
 appears, and moves stranded connections over.
 
+<p align="center"><img src="docs/images/networktoggle-menu.webp" width="360" alt="NetworkToggle menu bar panel showing the active Thunderbolt Ethernet connection and a drag-to-reorder connection priority list"></p>
+
 ---
 
 ## ⬇️ Download
@@ -30,6 +32,28 @@ Requires macOS 26 or later. Signed with Developer ID and notarized by Apple. Eve
 copy of the same image, for pinning to a specific build.
 
 ---
+
+## Features
+
+- **See the real connection**: The menu shows which connection is actually carrying your traffic, with live download and upload speeds while it's open.
+- **Connection order**: Drag connections to reorder them, or use any working connection from the list. macOS uses the topmost one that works.
+- **When a dock appears**: A small panel offers to switch to the wired connection, or reports that macOS already did. Settings offers Ask me, Switch automatically or Do nothing.
+- **Checks before switching**: It waits for the link to settle and checks that the router answered, so a dock with a dead uplink is never offered.
+- **New docks**: A dock macOS hasn't seen before gets a service listed below Wi-Fi. NetworkToggle offers to move it up so it's actually used.
+- **Connections left on Wi-Fi**: Lists open connections, including file shares, still running over Wi-Fi, and moves them over by holding Wi-Fi off until they reconnect.
+- **VPN aware**: Shows the VPN and the connection underneath it, and asks before any change that would pull a VPN off its connection.
+- **Wi-Fi and undo**: Turn Wi-Fi off or on from the menu, and put the previous order back with Undo.
+- **URLs** for ToolHUD, Shortcuts or scripts: `networktoggle://use-wired`, `move-connections`, `toggle-wifi`, `undo` and `panel`.
+- **Settings sync**: What happens when a wired connection appears, the wait, the menu bar and update choices can follow you to every Mac on the same iCloud account.
+- **Dock, menu bar, both or neither**, plus open at login and updates from GitHub that ask first or install automatically.
+
+## Screenshots
+
+<table>
+<tr>
+<td width="50%" align="center"><img src="docs/images/networktoggle-settings.webp" width="320" alt="NetworkToggle Settings with open at login, automatic switching, new docks, Dock and menu bar, iCloud settings sync and updates"><br><sub><b>Settings.</b> Automatic switching, new docks, where NetworkToggle appears, settings sync and updates.</sub></td>
+</tr>
+</table>
 
 ## The problem it solves
 
