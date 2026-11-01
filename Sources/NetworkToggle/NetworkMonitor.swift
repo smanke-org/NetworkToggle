@@ -212,6 +212,8 @@ final class NetworkMonitor {
 
         detectNewServices(services)
         detectWiredArrival()
+        // Wi-Fi may have turned on or off (from here, the helper or System Settings).
+        ToolHUDFeatureStates.publish()
     }
 
     // MARK: - VPN

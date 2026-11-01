@@ -42,6 +42,8 @@ struct NetworkToggleApp: App {
         }
         let hubMenu = HubMenu(model: model)
         hubMenu.start()
+        // ToolHUD lights its Wi-Fi button while Wi-Fi is on (the same test toggle-wifi uses).
+        ToolHUDFeatureStates.start { ["toggle-wifi": model.monitor.wiFi?.linkUp ?? false] }
         AppDelegate.onURL = { url in
             let monitor = model.monitor, controller = model.controller!
             switch url.host {
