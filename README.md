@@ -43,7 +43,7 @@ copy of the same image, for pinning to a specific build.
 - **Connections left on Wi-Fi**: Lists open connections, including file shares, still running over Wi-Fi, and moves them over by holding Wi-Fi off until they reconnect.
 - **VPN aware**: Shows the VPN and the connection underneath it, and asks before any change that would pull a VPN off its connection.
 - **Wi-Fi and undo**: Turn Wi-Fi off or on from the menu, and put the previous order back with Undo.
-- **URLs** for ToolHUD, Shortcuts or scripts: `networktoggle://use-wired`, `move-connections`, `toggle-wifi`, `undo` and `panel`.
+- **URLs** for ToolHUD, Shortcuts or scripts: `networktoggle://use-wired`, `move-connections`, `toggle-wifi`, `undo` and `panel`. ToolHUD's Wi-Fi button lights up while Wi-Fi is on.
 - **Settings sync**: What happens when a wired connection appears, the wait, the menu bar and update choices can follow you to every Mac on the same iCloud account.
 - **Dock, menu bar, both or neither**, plus open at login and updates from GitHub that ask first or install automatically.
 
@@ -192,7 +192,8 @@ NetworkToggle updates itself from the latest GitHub release's `.dmg` asset — a
 alone ships nothing to an installed copy. It checks once a day, or as often as you choose in Settings (a number of hours, days, weeks or months), and Settings › Updates decides what happens when it finds one:
 
 - **Ask me first** (the default): a notification and an "Update to …" menu item; nothing
-  installs until you confirm. A version you skip is not raised again on its own.
+  installs until you confirm. The update window shows what's new in the latest releases, and
+  a version you choose not to be reminded about is not raised again on its own.
 - **Install automatically**: the update is downloaded and verified straight away, then
   installed once no network switch is in progress or waiting for your answer, no app is
   presenting or keeping the display awake, and the Mac hasn't been used for 2 minutes.

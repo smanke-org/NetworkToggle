@@ -85,6 +85,7 @@ enum Help {
                 ("networktoggle://panel", "Open the menu bar panel in a window"),
             ]),
             .text("Use these links from Shortcuts, scripts or a launcher. ToolHUD's NetworkToggle buttons use them."),
+            .tip("With \"Show which features are on\" turned on in ToolHUD, its Wi-Fi button lights up while Wi-Fi is on."),
         ]),
 
         HelpTopic(id: "updates", title: "Updates", symbol: "arrow.down.circle", blocks: [
