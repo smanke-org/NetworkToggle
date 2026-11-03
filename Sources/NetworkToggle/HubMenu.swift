@@ -40,6 +40,7 @@ final class HubMenu: NSObject {
             let ask = interruptsVPN(target)
             menu.addItem(withTitle: "Switch to \(target.name)\(ask ? "…" : "")",
                          action: ask ? #selector(showPanel) : #selector(switchToWired), target: self)
+                .showIcon("cable.connector")
             menu.addItem(withTitle: "Switch and Force Reconnect\(ask ? "…" : "")",
                          action: ask ? #selector(showPanel) : #selector(switchToWiredForcing), target: self)
                 .toolTip = "Holds Wi-Fi off until open connections move, then turns it back on."
@@ -56,25 +57,30 @@ final class HubMenu: NSObject {
         }
         if let wifi = monitor.wiFi, model.helper.state.isReady {
             menu.addItem(withTitle: wifi.linkUp ? "Turn Wi-Fi Off" : "Turn Wi-Fi On", action: #selector(toggleWiFi), target: self)
+                .showIcon(wifi.linkUp ? "wifi.slash" : "wifi")
         }
         if controller.undoableOrder != nil {
             menu.addItem(withTitle: "Undo Last Change", action: #selector(undo), target: self)
         }
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Show Connections…", action: #selector(showPanel), target: self)
+        menu.addItem(withTitle: "Show Connections…", action: #selector(showPanel), target: self).showIcon("network")
         menu.addItem(.separator())
 
         if let staged = AutoUpdater.shared.staged {
             menu.addItem(withTitle: "Update to \(staged.version) Now", action: #selector(installUpdate), target: self)
+                .showIcon("arrow.down.circle")
         } else if let pending = UpdateAvailability.shared.pending {
             menu.addItem(withTitle: "Update to \(pending)…", action: #selector(checkForUpdates), target: self)
+                .showIcon("arrow.down.circle")
         } else {
             menu.addItem(withTitle: "Check for Updates…", action: #selector(checkForUpdates), target: self)
+                .showIcon("arrow.down.circle")
         }
         menu.addItem(withTitle: "NetworkToggle Help", action: #selector(showHelp), target: self)
             .image = NSImage(systemSymbolName: "questionmark.circle", accessibilityDescription: nil)
         let settings = menu.addItem(withTitle: "Settings…", action: #selector(showSettings), target: self)
         settings.keyEquivalent = ","
+        settings.showIcon("gearshape")
         menu.addItem(withTitle: "About NetworkToggle", action: #selector(showAbout), target: self)
         menu.addItem(withTitle: "Our other apps…", action: #selector(showOtherApps), target: self)
         menu.addItem(.separator())
