@@ -86,6 +86,15 @@ enum Help {
             ]),
             .text("Use these links from Shortcuts, scripts or a launcher. ToolHUD's NetworkToggle buttons use them."),
             .tip("With \"Show which features are on\" turned on in ToolHUD, its Wi-Fi button lights up while Wi-Fi is on."),
+            .heading("Command line and AI agents"),
+            .text("NetworkToggle is also a command line tool, so scripts and AI agents such as Claude Code or Codex can read the active connection and the service order, switch connections, reorder them, turn Wi-Fi on or off and move connections left on Wi-Fi. Commands run in the open app, through the same code as the menu. Anything that changes the network only shows what it would do until --yes is added."),
+            .keys([
+                ("nettoggle help", "List every command and its options"),
+                ("nettoggle status", "The active connection, VPN, Wi-Fi and helper"),
+                ("nettoggle services switch Ethernet --yes", "Switch, as the menu's Switch button does"),
+                ("nettoggle mcp", "Offer the same commands to MCP apps, such as Claude Desktop"),
+            ]),
+            .text("To type nettoggle in Terminal, link it once: ln -s /Applications/NetworkToggle.app/Contents/MacOS/NetworkToggle ~/.local/bin/nettoggle (with ~/.local/bin on your PATH). MCP apps take the full path to that program, followed by mcp."),
         ]),
 
         HelpTopic(id: "updates", title: "Updates", symbol: "arrow.down.circle", blocks: [

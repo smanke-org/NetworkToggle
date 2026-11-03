@@ -25,7 +25,7 @@ final class AppModel {
         strandedMonitor = StrandedTrafficMonitor(helper: helper)
         controller = SwitchController(monitor: monitor, helper: helper, notifier: notifier)
         #if DEBUG
-        if DebugQuitTest.isTestRun { return }
+        if DebugQuitTest.isTestRun || AgentSocket.isTestRun { return }
         #endif
         notifier.start()
         notifier.onMoveTraffic = { [weak self] in

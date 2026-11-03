@@ -103,6 +103,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         #if DEBUG
+        // An agent CLI test copy (APP_STORE) runs with no Dock icon or menu bar item at all.
+        if AgentSocket.isTestRun {
+            NSApp.setActivationPolicy(.prohibited)
+            return
+        }
         if let snapshot = ProcessInfo.processInfo.environment["NETWORKTOGGLE_DEBUG_HELP_TEST"] {
             DebugHelpTest.run(snapshot: snapshot, delegate: nil)
             return

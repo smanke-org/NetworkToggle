@@ -1,7 +1,7 @@
 import SwiftUI
 import NetworkToggleKit
 
-@main
+/// Started by AppMain, which first checks for a command line command.
 struct NetworkToggleApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var model: AppModel
@@ -12,7 +12,18 @@ struct NetworkToggleApp: App {
         // Before anything saves a setting: an empty domain means a brand-new install.
         let newInstall = SettingsSync.domainIsEmpty()
         let model = AppModel()
+        AgentContext.model = model
         #if DEBUG
+        // A test run of the agent CLI (APP_STORE): its own settings and the agent socket, and
+        // nothing else: no menu bar item, sync, updater, ToolHUD hub, notifications or helper.
+        // It reads the network, and never asks the helper to change it.
+        if AgentSocket.isTestRun {
+            model.monitor.onWiredBecameAvailable = nil
+            model.monitor.onNewServiceAppeared = nil
+            _model = State(initialValue: model)
+            AgentSocket.listen { AgentRouter.handle($0) }
+            return
+        }
         // A Help or quit test run shares the installed app's settings and helper, so it
         // starts nothing else: no sync, no updates, no switching.
         if DebugQuitTest.isTestRun {
@@ -42,6 +53,9 @@ struct NetworkToggleApp: App {
         }
         let hubMenu = HubMenu(model: model)
         hubMenu.start()
+        // `nettoggle` and the MCP server talk to the app through this.
+        AgentContext.showPanel = { hubMenu.showPanel() }
+        AgentSocket.listen { AgentRouter.handle($0) }
         // ToolHUD lights its Wi-Fi button while Wi-Fi is on (the same test toggle-wifi uses).
         ToolHUDFeatureStates.start { ["toggle-wifi": model.monitor.wiFi?.linkUp ?? false] }
         AppDelegate.onURL = { url in
@@ -73,7 +87,7 @@ struct NetworkToggleApp: App {
         // Settings can remove the menu bar icon; the app then lives in the Dock, or nowhere.
         // ToolHUD can also take it into its own menu while it runs; that never changes the
         // setting, so the icon comes back when ToolHUD quits.
-        MenuBarExtra(isInserted: Binding(get: { settings.showInMenuBar && !hub.isHosted },
+        MenuBarExtra(isInserted: Binding(get: { settings.showInMenuBar && !hub.isHosted && !AgentSocket.isTestRun },
                                          set: { if !hub.isHosted { settings.showInMenuBar = $0 } })) {
             MenuContentView(
                 monitor: model.monitor,

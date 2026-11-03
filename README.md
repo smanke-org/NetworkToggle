@@ -169,6 +169,34 @@ left on Wi-Fi, `toggle-wifi` turns Wi-Fi on or off, and `undo` puts the previous
 They need the helper, as the menu's buttons do. `networktoggle://panel` opens the menu bar
 panel in a window of its own.
 
+## Command line and AI agents
+
+NetworkToggle is also a command line tool, so scripts and AI agents (Claude Code, Codex) can read
+the active connection, the service order and the VPN, switch connections, reorder them, turn
+Wi-Fi on or off and move connections left on Wi-Fi. Commands run in the open app through the
+same code as its menu. Link it once to type `nettoggle`:
+
+```bash
+ln -s /Applications/NetworkToggle.app/Contents/MacOS/NetworkToggle ~/.local/bin/nettoggle
+```
+
+```bash
+nettoggle help
+nettoggle status --json
+nettoggle services list
+nettoggle services switch Ethernet          # shows what it would do
+nettoggle services switch Ethernet --yes    # does it
+```
+
+Every command takes `--json`. Anything that changes the network only shows what it would do
+until you add `--yes`, since a switch can drop open connections, the agent's own included.
+Changes need the helper, as the menu's buttons do. For MCP apps such as Claude Desktop, the same
+commands are served by `/Applications/NetworkToggle.app/Contents/MacOS/NetworkToggle mcp`:
+
+```bash
+claude mcp add --scope user nettoggle -- /Applications/NetworkToggle.app/Contents/MacOS/NetworkToggle mcp
+```
+
 ## Opening at login
 
 **Settings › General › Open NetworkToggle at login** registers the app as a login item

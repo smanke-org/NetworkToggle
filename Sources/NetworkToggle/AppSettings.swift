@@ -75,7 +75,13 @@ final class AppSettings {
         didSet { defaults.set(skippedUpdateVersion, forKey: "skippedUpdateVersion") }
     }
 
-    private let defaults = UserDefaults.standard
+    private let defaults: UserDefaults = {
+        #if DEBUG
+        // An agent CLI test copy (APP_STORE) keeps its settings apart from the installed app's.
+        if AgentSocket.isTestRun, let suite = UserDefaults(suiteName: AgentSocket.testDefaultsSuite) { return suite }
+        #endif
+        return .standard
+    }()
 
     private init() {
         defaults.register(defaults: [
